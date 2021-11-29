@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
+import 'package:jitsi_meet/jitsi_meet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -37,28 +41,63 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class ChatRoomForm extends StatelessWidget {
+class ChatRoomForm extends StatefulWidget {
   ChatRoomForm({Key? key}) : super(key: key);
 
+  @override
+  State<ChatRoomForm> createState() => _ChatRoomFormState();
+}
+
+class _ChatRoomFormState extends State<ChatRoomForm> {
   final _formKey = GlobalKey<FormState>();
   late String roomCode;
 
-  joinVideoConferrencingRoom() {
+  joinVideoConferrencingRoom() async {
+    String serverUrl;
     if (_formKey.currentState!.validate()) {
-      print("joining...");
-    } else {
-      print("Please provide some room code to join");
-    }
-  }
+      serverUrl = "https://meet.jit.si";
 
-  Future shareContent() async {
-    if (_formKey.currentState!.validate()) {
-      await Share.share(
-          "Join Your room via $roomCode code, copy this code and paste in secret Room Section and join metting",
-          subject: "Join Video Conferrencing Room");
+      Map<FeatureFlagEnum, bool> featureFlags = {
+        FeatureFlagEnum.WELCOME_PAGE_ENABLED: false,
+      };
+
+      if (!kIsWeb) {
+        // Here is an example, disabling features for each platform
+        if (Platform.isAndroid) {
+          // Disable ConnectionService usage on Android to avoid issues (see README)
+          featureFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
+        } else if (Platform.isIOS) {
+          // Disable PIP on iOS as it looks weird
+          featureFlags[FeatureFlagEnum.PIP_ENABLED] = false;
+        }
+      }
+
+      // Define meetings options here
+      var options = JitsiMeetingOptions(room: roomCode)
+        ..serverURL = serverUrl
+        ..featureFlags.addAll(featureFlags);
+
+      debugPrint("JitsiMeetingOptions: $options");
+      await JitsiMeet.joinMeeting(options,
+          listener: JitsiMeetingListener(
+              onConferenceWillJoin: (message) {
+                debugPrint("${options.room} will join with message: $message");
+              },
+              onConferenceJoined: (message) {
+                debugPrint("${options.room} joined with message: $message");
+              },
+              onConferenceTerminated: (message) {
+                debugPrint("${options.room} terminated with message: $message");
+              },
+              genericListeners: [
+                JitsiGenericListener(
+                    eventName: 'readyToClose',
+                    callback: (dynamic message) {
+                      debugPrint("readyToClose callback");
+                    })
+              ]));
     } else {
-      // ignore: avoid_print
-      print("Please provide some room code");
+      print("please enter some code to join");
     }
   }
 
@@ -78,8 +117,9 @@ class ChatRoomForm extends StatelessWidget {
               },
               validator: (val) {
                 if (val == null || val.isEmpty) {
-                  return "Field Cant't be empty!";
+                  return "cant't be empty!";
                 } else {
+                  val = "";
                   return null;
                 }
               },

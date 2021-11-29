@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.video_call">
+    package="com.example.video_call"
+    xmlns:tools="http://schemas.android.com/tools">
    <application
+        tools:replace="android:label" 
         android:label="video_call_application"
         android:icon="@mipmap/ic_launcher">
         <activity

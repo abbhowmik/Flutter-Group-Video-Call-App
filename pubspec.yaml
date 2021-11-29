@@ -32,7 +32,7 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   share: ^2.0.4
-  # jitsi_meet: ^4.0.0
+  jitsi_meet: ^4.0.0
 
 dev_dependencies:
   flutter_test:
