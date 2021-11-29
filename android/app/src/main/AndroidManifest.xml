@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
    <application
         tools:replace="android:label" 
-        android:label="video_call_application"
+        android:label="MeetIn"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
