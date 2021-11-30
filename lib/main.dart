@@ -49,6 +49,7 @@ class SpScrn extends StatelessWidget {
     return Scaffold(
       body: SplashScreen(
         seconds: 2,
+        backgroundColor: Colors.black,
         navigateAfterSeconds: const LogicalHomePage(),
         image: Image.asset("assets/logo2.png"),
         photoSize: 120,
