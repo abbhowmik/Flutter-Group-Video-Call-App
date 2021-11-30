@@ -50,15 +50,8 @@ class SpScrn extends StatelessWidget {
       body: SplashScreen(
         seconds: 2,
         navigateAfterSeconds: const LogicalHomePage(),
-        image: Image.asset("assets/logo.png"),
-        title: const Text(
-          "Welcome to MeetIn",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 15,
-          ),
-        ),
-        photoSize: 80,
+        image: Image.asset("assets/logo2.png"),
+        photoSize: 120,
         styleTextUnderTheLoader: const TextStyle(),
         loaderColor: Colors.pink,
       ),
