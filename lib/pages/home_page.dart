@@ -122,6 +122,7 @@ class ChatRoomForm extends StatefulWidget {
 }
 
 class _ChatRoomFormState extends State<ChatRoomForm> {
+  final user = FirebaseAuth.instance.currentUser!;
   final _formKey = GlobalKey<FormState>();
   late String roomCode;
 
@@ -148,6 +149,9 @@ class _ChatRoomFormState extends State<ChatRoomForm> {
       // Define meetings options here
       var options = JitsiMeetingOptions(room: roomCode)
         ..serverURL = serverUrl
+        ..userDisplayName = user.displayName
+        ..userEmail = user.email
+        ..userAvatarURL = user.photoURL
         ..featureFlags.addAll(featureFlags);
 
       debugPrint("JitsiMeetingOptions: $options");
