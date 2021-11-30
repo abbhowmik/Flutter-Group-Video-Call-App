@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:video_call/pages/home_page.dart';
+import 'package:video_call/pages/login_page.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -10,10 +11,11 @@ void main() {
       statusBarColor: Colors.transparent,
     ),
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -23,29 +25,31 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SpScrn(),
+      home: const SpScrn(),
     );
   }
 }
 
 class SpScrn extends StatelessWidget {
+  const SpScrn({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SplashScreen(
         seconds: 2,
-        navigateAfterSeconds: const HomePage(),
+        navigateAfterSeconds: const LoginPage(),
         image: Image.asset("assets/logo.png"),
-        title: Text(
+        title: const Text(
           "Welcome to MeetIn",
           style: TextStyle(
-            color: Colors.green,
+            color: Colors.black,
             fontSize: 15,
           ),
         ),
-        photoSize: 50,
+        photoSize: 80,
         styleTextUnderTheLoader: const TextStyle(),
-        loaderColor: Colors.green,
+        loaderColor: Colors.pink,
       ),
     );
   }
