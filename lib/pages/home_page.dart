@@ -1,10 +1,14 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
+import 'package:video_call/provider/google_sign_in.dart';
+import 'package:video_call/services/database.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +18,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future saveUserInfoInDatabase() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    print("Name is ${user.displayName}");
+    print("Email is ${user.displayName}");
+    print("PhotoUrl is ${user.photoURL}");
+    print("PhoneNumber is ${user.phoneNumber}");
+    Map<String, dynamic> userInfoMap = {
+      "userId": user.email,
+      "userEmail": user.email,
+      "userName": user.displayName,
+      "userImageUrl": user.photoURL,
+      "addedPhoneNumber": user.phoneNumber,
+    };
+    await DatabaseServices()
+        .addUserInfo(user.email!, userInfoMap)
+        .whenComplete(() => print("UserInfo added Complete! 😏😏😏😏😏😏"));
+  }
+
+  @override
+  void initState() {
+    saveUserInfoInDatabase();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,10 +49,22 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         elevation: 0.6,
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.red),
         title: Text(
-          'Join Video Conferrence Room',
+          'Join Video Conferrence',
           style: TextStyle(color: Colors.black),
         ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              openModal();
+            },
+            child: Container(
+                padding: EdgeInsets.all(8),
+                margin: EdgeInsets.only(right: 7, top: 8),
+                child: Icon(Icons.logout)),
+          )
+        ],
       ),
       body: Container(
         margin: EdgeInsets.only(top: 210),
@@ -38,6 +78,39 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void openModal() {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text("Loggin You Out"),
+          content: Text("Are you sure you want to Log Out From this Account?"),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                logOutFromThisAccount(context);
+              },
+              child: Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future logOutFromThisAccount(BuildContext context) async {
+    Navigator.of(context).pop();
+    final provider =
+        await Provider.of<GoogleSignInProvider>(context, listen: false);
+    provider.googleSignOut();
   }
 }
 

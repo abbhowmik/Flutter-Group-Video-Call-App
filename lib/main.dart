@@ -1,11 +1,18 @@
 // @dart=2.9
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:video_call/pages/home_page.dart';
+import 'package:video_call/pages/logical_home_page.dart';
 import 'package:video_call/pages/login_page.dart';
+import 'package:video_call/provider/google_sign_in.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -19,13 +26,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'VideoConferrence',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (context) => GoogleSignInProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'VideoConferrence',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          fontFamily: GoogleFonts.lato().fontFamily,
+        ),
+        home: const SpScrn(),
       ),
-      home: const SpScrn(),
     );
   }
 }
@@ -38,7 +49,7 @@ class SpScrn extends StatelessWidget {
     return Scaffold(
       body: SplashScreen(
         seconds: 2,
-        navigateAfterSeconds: const LoginPage(),
+        navigateAfterSeconds: const LogicalHomePage(),
         image: Image.asset("assets/logo.png"),
         title: const Text(
           "Welcome to MeetIn",
